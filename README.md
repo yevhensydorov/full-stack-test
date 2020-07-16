@@ -1,6 +1,11 @@
 Random events generator project
 
-## Setup and run the project
+# Link to the deployed live version
+
+I've used Nerlify service to deploy the live version of application
+[https://yevhen-sydorov-thespectator.netlify.app/](https://yevhen-sydorov-thespectator.netlify.app/)
+
+## Setup and run the project locally
 
 Clone the project to your local machine <br />
 `git clone https://github.com/yevhensydorov/full-stack-test.git` <br />
