@@ -1,44 +1,64 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Random events generator project
 
-## Available Scripts
+## Setup and run the project
 
-In the project directory, you can run:
-
-### `yarn start`
-
-Runs the app in the development mode.<br />
+Clone the project to your local machine <br />
+`git clone https://github.com/yevhensydorov/full-stack-test.git` <br />
+Go to the project directory <br />
+`cd full-stack-test` <br />
+Install project dependencies <br />
+`npm install` <br />
+In the project directory, you can need to create `.env` file with next value: <br />
+`REACT_APP_API_SERVER_URL=LINK_FROM_THE_EMAIL` <br />
+Run the project <br />
+`yarn start`
+It'll run the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
-### `yarn test`
+## Tests
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+I've created `setupTests.js` file in the `/src` directory to add handy assertions to Jest. All tests located in the `/src/tests` directory. There three basic tests which are checking if there is an event generator button, page doesn't display event data if user hasn't clicked on the button and page display event data if you click on the button. <br />
 
-### `yarn build`
+To run the tests you can use command <br />
+`yarn test` <br />
+It'll launch the test runner in the interactive watch mode.<br />
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Save event data to a remote data store
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+I've enhanced application to save the generated event data to the AWS located DynamoDB database. I've added fetch to the `usePageViewGenerator` in the `logic.tsx` file. Fetch code itself:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```js
+fetch(`${API_SERVER_URL}`, {
+  method: 'POST',
+  headers: {
+    'Content-type': 'application/json'
+  },
+  body: JSON.stringify({
+    id: event.id,
+    createdAt: event.created_at,
+    title: event.page.title,
+    description: event.page.description,
+    tags: event.page.tags.join(', '),
+    userId: event.user.id,
+    userCreatedAt: event.user.created_at
+  })
+})
+  .then((res) => res.json())
+  // Enhance: Loading handling
+  .then(() => {
+    console.log('Message Added')
+  })
+// Enhance: Error handling
+```
 
-### `yarn eject`
+This code is doing POST request to the provided API_SERVER_URL, which is basically our events REST API from the AWS. We are creating the body of the request using `event` constant data that was created before.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Better message to the user
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+After clicking `Generate pageview` button user used to see `Last pageview` heading message. I've change it to the `Last pageview that was saved to The Spectator Database` so the user will know that previous message has been saved to database.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Future improvements
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+If I had more time I'd add `Loading` and `Error` handling to the project. So the user will know that after clicking the `Generate pageview` button application is making request and display spinner. Also, in case of the error, we need to send the message to the user stating that something went wrong.

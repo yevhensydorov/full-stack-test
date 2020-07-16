@@ -12,7 +12,7 @@ export const PageviewGenerator: React.FC = () => {
 
       {pageview && (
         <>
-          <h3>Last pageview</h3>
+          <h3>Last pageview that was saved to The Spectator Database</h3>
           <p>Event ID: {pageview?.id}</p>
           <p>Event date: {pageview?.created_at.toISOString()}</p>
           <p>Page title: {pageview?.page?.title}</p>
